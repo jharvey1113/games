@@ -706,16 +706,16 @@
         ...[[0.5, 0.4], [-0.5, 0.4], [0.5, -0.4], [-0.5, -0.4]].map(([x, z]) => { const w = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.12, 12), mat('#23252e')); w.rotation.z = Math.PI / 2; return at3(w, x, -0.3, z); })) },
     dom: { name: 'Power Chord', move: 'wave', shout: 'ROCK ON!',
       icon: '<svg viewBox="0 0 64 64"><g transform="rotate(35 32 32)"><rect x="29" y="4" width="6" height="30" fill="#6b4226"/><rect x="27" y="2" width="10" height="6" rx="2" fill="#2a2a33"/><path d="M32 30c-12 0-16 8-14 16 2 9 10 14 14 14s12-5 14-14c2-8-2-16-14-16z" fill="#e8322a"/><rect x="26" y="40" width="12" height="4" fill="#2a2a33"/><circle cx="32" cy="50" r="3" fill="#f7f4ec"/></g><path d="M8 20q4-6 8 0M6 30q5-7 10 0" stroke="#c86bff" stroke-width="3" fill="none" stroke-linecap="round"/></svg>' },
-    momma: { name: 'Wooden Spoon', move: 'boomerang', shout: "MOMMA'S SPOON!", spin: 'y',
+    momma: { name: 'Wooden Spoon', move: 'boomerang', shout: 'WATER WASHOUT!', spin: 'y',
       icon: '<svg viewBox="0 0 64 64"><g transform="rotate(-40 32 32)"><rect x="29" y="22" width="6" height="38" rx="3" fill="#b07b3c"/><ellipse cx="32" cy="14" rx="11" ry="13" fill="#c98f52"/><ellipse cx="32" cy="14" rx="7" ry="9" fill="#a8703f"/></g></svg>',
       build: () => { const h = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.7, 8), mat('#b07b3c')); h.rotation.z = Math.PI / 2;
         const bowl = new THREE.Mesh(new THREE.SphereGeometry(0.34, 14, 10), mat('#c98f52')); bowl.scale.set(1.2, 0.35, 0.9); return G(h, at3(bowl, 1.0, 0, 0)); } },
-    poppa: { name: 'Pizza Pie', move: 'pierce', shout: 'SPECIAL DELIVERY!', spin: 'y', r2: 10,
+    poppa: { name: 'Pizza Pie', move: 'pierce', shout: 'BUSTED!', spin: 'y', r2: 10,
       icon: '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#d9a35a"/><circle cx="32" cy="32" r="21" fill="#c8261e"/><circle cx="32" cy="32" r="19" fill="#f7d354"/><g fill="#9e1f18"><circle cx="24" cy="24" r="4"/><circle cx="40" cy="26" r="4"/><circle cx="30" cy="40" r="4"/><circle cx="42" cy="40" r="3.5"/><circle cx="21" cy="36" r="3"/></g></svg>',
       build: () => G(new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.15, 0.16, 28), mat('#d9a35a')),
         at3(new THREE.Mesh(new THREE.CylinderGeometry(0.98, 0.98, 0.04, 28), mat('#f7d354', { roughness: 0.4 })), 0, 0.09, 0),
         ...Array.from({ length: 7 }, (_, n) => at3(new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.05, 12), mat('#9e1f18')), Math.cos(n * 0.9) * (n ? 0.6 : 0), 0.12, Math.sin(n * 0.9) * (n ? 0.6 : 0)))) },
-    nate: { name: 'Soccer Ball', move: 'bounce', shout: 'GOOOAL!', spin: 'x',
+    nate: { name: 'Soccer Ball', move: 'bounce', shout: 'BAZINGA!', spin: 'x',
       icon: '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="#f7f7f2" stroke="#2a2a33" stroke-width="2"/><polygon points="32,22 41,29 38,40 26,40 23,29" fill="#1a1a1a"/><path d="M32 22V9M41 29l12-4M38 40l7 11M26 40l-7 11M23 29l-12-4" stroke="#1a1a1a" stroke-width="2.5"/></svg>',
       build: () => { const ico = new THREE.IcosahedronGeometry(1, 0).attributes.position, spots = [];
         for (let v = 0; v < ico.count; v += 3) { const p = new V3(ico.getX(v), ico.getY(v), ico.getZ(v)).normalize().multiplyScalar(0.52); spots.push(at3(new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 6), mat('#1a1a1a')), p.x, p.y, p.z)); }
@@ -724,7 +724,7 @@
       icon: '<svg viewBox="0 0 64 64"><ellipse cx="32" cy="36" rx="26" ry="17" fill="#c98a4a"/><ellipse cx="32" cy="32" rx="24" ry="14" fill="#d9a060"/><g stroke="#f4dcae" stroke-width="3" stroke-linecap="round"><path d="M18 26l8 10"/><path d="M29 23l8 11"/><path d="M40 23l7 10"/></g></svg>',
       build: () => { const loaf = new THREE.Mesh(new THREE.CapsuleGeometry(0.45, 0.8, 6, 14), mat('#c98a4a', { roughness: 0.75 })); loaf.rotation.z = Math.PI / 2; loaf.scale.set(1, 1, 0.85);
         return G(loaf, ...[-0.35, 0, 0.35].map(x => { const s = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 0.5), mat('#f4dcae')); s.rotation.y = 0.5; return at3(s, x, 0.4, 0); })); } },
-    rorie: { name: 'Gelato Trio', move: 'spread', shout: 'BRAIN FREEZE!', spin: 'x',
+    rorie: { name: 'Gelato Trio', move: 'spread', shout: 'BRONCO BREAKDOWN!', spin: 'x',
       icon: '<svg viewBox="0 0 64 64"><path d="M22 34l10 26 10-26z" fill="#d9a35a"/><path d="M24 38h16M26 44h12" stroke="#b07b3c" stroke-width="2"/><circle cx="24" cy="30" r="9" fill="#ff9ec4"/><circle cx="40" cy="30" r="9" fill="#9ee6c4"/><circle cx="32" cy="18" r="9" fill="#fff0a0"/></svg>',
       build: c => G(new THREE.Mesh(new THREE.IcosahedronGeometry(0.55, 2), mat(c, { roughness: 0.35 }))) }
   };
