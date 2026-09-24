@@ -2,6 +2,7 @@
 
 Homemade browser games, played at **https://jharvey1113.github.io/games/**
 
+- **Meatball Kart** (`meatball-kart/`): a 3D kart racer with six racers and Italian-food items.
 - **Meatball Bros.** (`meatball-bros/`): a six-level platformer starring Vinny and Dom.
 - **Meteoroids** (`meteoroids/`): a vector-style rock shooter.
 - **Star Swarm** (`star-swarm/`): a formation space shooter with tractor beams and a double fighter.
