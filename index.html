@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arcade Shelf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap">
+<style>
+  :root { color-scheme: dark; --bg: #0b0d17; --card: #141827; --line: #2a3150; --ink: #fff4e0; --dim: #9aa3c0; --gold: #f7c33c; --ember: #ff8a3d; --teal: #7fe0cc; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: radial-gradient(1200px 600px at 50% -10%, #1c2140, var(--bg)); color: var(--ink);
+         font-family: "Share Tech Mono", ui-monospace, Consolas, monospace; font-size: 16px; line-height: 1.5;
+         padding-inline: 16px; padding-block: 48px 64px; }
+  main { max-width: 860px; margin: 0 auto; }
+  h1 { font-family: "Press Start 2P", monospace; font-size: clamp(20px, 5vw, 34px); letter-spacing: .04em; margin: 0 0 12px;
+       color: var(--gold); text-shadow: 3px 3px 0 #6b3508; }
+  .lede { color: var(--dim); margin: 0 0 40px; max-width: 60ch; }
+  .shelf { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+  a.game { display: flex; flex-direction: column; background: var(--card); border: 2px solid var(--line); border-radius: 6px;
+           color: inherit; text-decoration: none; overflow: hidden; transition: transform .15s, border-color .15s; }
+  a.game:hover, a.game:focus-visible { transform: translateY(-3px); border-color: var(--gold); outline: none; }
+  .screen { aspect-ratio: 16 / 9; max-width: 100%; display: block; width: 100%; }
+  .info { padding: 16px 18px 20px; display: grid; gap: 8px; }
+  h2 { font-family: "Press Start 2P", monospace; font-size: 14px; margin: 0; letter-spacing: .03em; }
+  .info p { margin: 0; color: var(--dim); }
+  .play { font-family: "Press Start 2P", monospace; font-size: 10px; color: var(--teal); margin-top: 6px; }
+  footer { margin-top: 48px; color: var(--dim); font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { a.game { transition: none; } a.game:hover { transform: none; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>ARCADE SHELF</h1>
+  <p class="lede">Homemade takes on classic arcade games. Each one runs right in the browser on a computer, phone or tablet. No install needed.</p>
+
+  <div class="shelf">
+    <a class="game" href="meatball-bros/">
+      <svg class="screen" viewBox="0 0 160 90" role="img" aria-label="Meatball Bros. preview" shape-rendering="crispEdges">
+        <rect width="160" height="90" fill="#78b8ff"/>
+        <circle cx="30" cy="72" r="22" fill="#46a85a"/>
+        <rect y="72" width="160" height="18" fill="#b06a34"/><rect y="72" width="160" height="4" fill="#4cc255"/>
+        <rect x="70" y="34" width="10" height="10" fill="#f7c33c"/><rect x="80" y="34" width="10" height="10" fill="#c8663b"/><rect x="90" y="34" width="10" height="10" fill="#f7c33c"/>
+        <rect x="120" y="56" width="16" height="16" fill="#38b54a"/><rect x="118" y="52" width="20" height="6" fill="#38b54a"/>
+        <rect x="40" y="56" width="8" height="3" fill="#17a7a0"/><rect x="41" y="59" width="6" height="4" fill="#f2b98a"/><rect x="40" y="63" width="8" height="5" fill="#7b4bd1"/><rect x="40" y="68" width="8" height="4" fill="#2f5fa8"/>
+        <rect x="52" y="53" width="8" height="3" fill="#9a2438"/><rect x="52" y="56" width="8" height="4" fill="#e8a877"/><rect x="52" y="60" width="8" height="6" fill="#e0a526"/><rect x="52" y="66" width="8" height="6" fill="#34344a"/>
+        <circle cx="100" cy="66" r="6" fill="#8a4a2a"/><rect x="96" y="64" width="2" height="2" fill="#fff"/><rect x="102" y="64" width="2" height="2" fill="#fff"/>
+      </svg>
+      <div class="info">
+        <h2>MEATBALL BROS.</h2>
+        <p>Play as Vinny or Dom through six levels of meatballs, shellbugs and pizza ovens, then take down the Meatball King.</p>
+        <span class="play">▶ PLAY</span>
+      </div>
+    </a>
+
+    <a class="game" href="meteoroids/">
+      <svg class="screen" viewBox="0 0 160 90" role="img" aria-label="Meteoroids preview">
+        <rect width="160" height="90" fill="#04060b"/>
+        <g fill="#cfe0ff" opacity=".6"><rect x="12" y="10" width="1" height="1"/><rect x="140" y="20" width="1" height="1"/><rect x="60" y="80" width="1" height="1"/><rect x="100" y="8" width="1" height="1"/><rect x="25" y="60" width="1" height="1"/></g>
+        <g fill="none" stroke-linejoin="round" stroke-width="1.2">
+          <polygon points="110,18 124,14 134,24 130,38 116,42 106,32" stroke="#dccab0"/>
+          <polygon points="36,20 46,18 50,28 42,34 32,30" stroke="#dccab0"/>
+          <polygon points="120,62 128,60 132,68 124,72 118,68" stroke="#dccab0"/>
+          <path d="M80 38 L72 56 M80 38 L88 56 M74 52 L86 52" stroke="#e8f5ff"/>
+          <ellipse cx="46" cy="70" rx="8" ry="3" stroke="#ff6ad5"/>
+        </g>
+        <circle cx="96" cy="30" r="1.3" fill="#fff"/><circle cx="104" cy="24" r="1.3" fill="#fff"/>
+        <g stroke="#ff8a3d" stroke-width="1"><path d="M136 28 l5 -2"/><path d="M135 33 l6 1"/></g>
+      </svg>
+      <div class="info">
+        <h2>METEOROIDS</h2>
+        <p>A glowing vector-style rock shooter. Blast meteoroids into smaller pieces and dodge the flying saucers.</p>
+        <span class="play">▶ PLAY</span>
+      </div>
+    </a>
+  </div>
+
+  <footer>Keyboard on a computer, on-screen buttons on a phone. High scores save in your browser.</footer>
+</main>
+</body>
+</html>
