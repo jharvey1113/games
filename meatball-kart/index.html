@@ -612,6 +612,8 @@
     bump: () => { noise(0.18, 0.4, 300); tone(90, 0.15, 'square', 0.06, 60); },
     throw: () => noise(0.3, 0.3, 2400, 'highpass', 800), hop: () => tone(300, 0.08, 'square', 0.04, 500),
     boom: () => { noise(0.9, 0.6, 1200, 'lowpass', 60); tone(160, 0.6, 'square', 0.06, 40); },
+    zap: () => { tone(1800, 0.25, 'sawtooth', 0.05, 200); noise(0.3, 0.3, 4000, 'highpass', 1200); },
+    splash: () => { noise(0.5, 0.45, 1500, 'bandpass', 400); tone(500, 0.15, 'sine', 0.06, 1200); },
     chord() { // distorted E power chord for Dom
       if (!AC) return;
       const t = AC.currentTime, ws = AC.createWaveShaper(), curve = new Float32Array(1024), lp = AC.createBiquadFilter(), g = AC.createGain();
@@ -704,29 +706,36 @@
         at3(new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.4, 6), mat('#5b6275')), 0, 0.5, 0),
         at3(new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), mat('#ff3b30', { emissive: '#ff3b30' })), 0, 0.72, 0),
         ...[[0.5, 0.4], [-0.5, 0.4], [0.5, -0.4], [-0.5, -0.4]].map(([x, z]) => { const w = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.12, 12), mat('#23252e')); w.rotation.z = Math.PI / 2; return at3(w, x, -0.3, z); })) },
-    dom: { name: 'Power Chord', move: 'wave', shout: 'ROCK ON!',
-      icon: '<svg viewBox="0 0 64 64"><g transform="rotate(35 32 32)"><rect x="29" y="4" width="6" height="30" fill="#6b4226"/><rect x="27" y="2" width="10" height="6" rx="2" fill="#2a2a33"/><path d="M32 30c-12 0-16 8-14 16 2 9 10 14 14 14s12-5 14-14c2-8-2-16-14-16z" fill="#e8322a"/><rect x="26" y="40" width="12" height="4" fill="#2a2a33"/><circle cx="32" cy="50" r="3" fill="#f7f4ec"/></g><path d="M8 20q4-6 8 0M6 30q5-7 10 0" stroke="#c86bff" stroke-width="3" fill="none" stroke-linecap="round"/></svg>' },
-    momma: { name: 'Wooden Spoon', move: 'boomerang', shout: 'WATER WASHOUT!', spin: 'y',
-      icon: '<svg viewBox="0 0 64 64"><g transform="rotate(-40 32 32)"><rect x="29" y="22" width="6" height="38" rx="3" fill="#b07b3c"/><ellipse cx="32" cy="14" rx="11" ry="13" fill="#c98f52"/><ellipse cx="32" cy="14" rx="7" ry="9" fill="#a8703f"/></g></svg>',
-      build: () => { const h = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.7, 8), mat('#b07b3c')); h.rotation.z = Math.PI / 2;
-        const bowl = new THREE.Mesh(new THREE.SphereGeometry(0.34, 14, 10), mat('#c98f52')); bowl.scale.set(1.2, 0.35, 0.9); return G(h, at3(bowl, 1.0, 0, 0)); } },
-    poppa: { name: 'Pizza Pie', move: 'pierce', shout: 'BUSTED!', spin: 'y', r2: 10,
-      icon: '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#d9a35a"/><circle cx="32" cy="32" r="21" fill="#c8261e"/><circle cx="32" cy="32" r="19" fill="#f7d354"/><g fill="#9e1f18"><circle cx="24" cy="24" r="4"/><circle cx="40" cy="26" r="4"/><circle cx="30" cy="40" r="4"/><circle cx="42" cy="40" r="3.5"/><circle cx="21" cy="36" r="3"/></g></svg>',
-      build: () => G(new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.15, 0.16, 28), mat('#d9a35a')),
-        at3(new THREE.Mesh(new THREE.CylinderGeometry(0.98, 0.98, 0.04, 28), mat('#f7d354', { roughness: 0.4 })), 0, 0.09, 0),
-        ...Array.from({ length: 7 }, (_, n) => at3(new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.05, 12), mat('#9e1f18')), Math.cos(n * 0.9) * (n ? 0.6 : 0), 0.12, Math.sin(n * 0.9) * (n ? 0.6 : 0)))) },
-    nate: { name: 'Soccer Ball', move: 'bounce', shout: 'BAZINGA!', spin: 'x',
-      icon: '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="#f7f7f2" stroke="#2a2a33" stroke-width="2"/><polygon points="32,22 41,29 38,40 26,40 23,29" fill="#1a1a1a"/><path d="M32 22V9M41 29l12-4M38 40l7 11M26 40l-7 11M23 29l-12-4" stroke="#1a1a1a" stroke-width="2.5"/></svg>',
-      build: () => { const ico = new THREE.IcosahedronGeometry(1, 0).attributes.position, spots = [];
-        for (let v = 0; v < ico.count; v += 3) { const p = new V3(ico.getX(v), ico.getY(v), ico.getZ(v)).normalize().multiplyScalar(0.52); spots.push(at3(new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 6), mat('#1a1a1a')), p.x, p.y, p.z)); }
-        return G(new THREE.Mesh(new THREE.SphereGeometry(0.6, 20, 14), mat('#f7f7f2', { roughness: 0.4 })), ...spots.slice(0, 12)); } },
+    dom: { name: 'Music Notes', move: 'straight', shout: 'ROCK ON!', spin: 'y', chord: true, speed: 34,
+      shots: [[-0.26, '#ff5ad0'], [-0.13, '#ffcf3a'], [0, '#3fd6c6'], [0.13, '#4fa3ff'], [0.26, '#c86bff']],
+      icon: '<svg viewBox="0 0 64 64"><g fill="#ff5ad0"><ellipse cx="18" cy="46" rx="8" ry="6"/><rect x="23" y="14" width="4" height="32"/></g><path d="M25 14c10 2 14 8 12 16" stroke="#ff5ad0" stroke-width="4" fill="none"/><g fill="#3fd6c6"><ellipse cx="40" cy="50" rx="7" ry="5.5"/><ellipse cx="54" cy="44" rx="7" ry="5.5"/><rect x="45" y="20" width="4" height="30"/><rect x="59" y="14" width="4" height="30"/><path d="M45 20l18-6v7l-18 6z"/></g></svg>',
+      build: c => { const m = mat(c, { emissive: c, emissiveIntensity: 0.7, roughness: 0.3 });
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.3, 14, 10), m); head.scale.set(1.35, 1, 1);
+        return G(head, at3(new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.95, 0.08), m), 0.36, 0.45, 0), at3(new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.1, 0.08), m), 0.5, 0.88, 0)); } },
+    momma: { name: 'Water Balloon', move: 'straight', shout: 'WATER WASHOUT!', spin: 'y', puddle: true, speed: 22, life: 1.6,
+      icon: '<svg viewBox="0 0 64 64"><ellipse cx="32" cy="28" rx="18" ry="21" fill="#3f9fe0"/><ellipse cx="25" cy="20" rx="5" ry="7" fill="#bfe4ff" opacity=".8"/><path d="M29 48l3 5 3-5z" fill="#2a7fc0"/><path d="M32 53c-3 4 3 6 0 10" stroke="#d6ecff" stroke-width="2" fill="none"/><g fill="#7fd0ff"><circle cx="50" cy="44" r="3"/><circle cx="12" cy="46" r="2.5"/></g></svg>',
+      build: () => { const b = new THREE.Mesh(new THREE.SphereGeometry(0.6, 20, 14), new THREE.MeshPhysicalMaterial({ color: '#3f9fe0', roughness: 0.08, clearcoat: 1, transparent: true, opacity: 0.85 }));
+        b.scale.set(1, 1.15, 1); const knot = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.18, 8), mat('#2a7fc0')); knot.rotation.x = Math.PI; return G(b, at3(knot, 0, -0.72, 0)); } },
+    poppa: { name: 'Mega Meatball', move: 'pierce', shout: 'BUSTED!', spin: 'x', r2: 12, speed: 24, lift: 0.5,
+      icon: '<svg viewBox="0 0 64 64"><circle cx="32" cy="36" r="24" fill="#8a4a2a"/><circle cx="23" cy="32" r="3.5" fill="#6a3219"/><circle cx="40" cy="44" r="4" fill="#6a3219"/><circle cx="36" cy="28" r="2.5" fill="#6a3219"/><path d="M10 30c5-15 39-17 44 0-7-6-14 2-22-2s-15 7-22 2z" fill="#d8321f"/><path d="M52 6l2 6 6 1-5 4 2 6-5-4-5 4 2-6-5-4 6-1z" fill="#ffcf3a"/></svg>',
+      build: () => G(new THREE.Mesh(new THREE.IcosahedronGeometry(1.25, 1), mat('#8a4a2a', { flatShading: true, roughness: 0.8 })),
+        at3(new THREE.Mesh(new THREE.SphereGeometry(1.05, 16, 10, 0, TAU, 0, 1.1), mat('#d8321f', { roughness: 0.3 })), 0, 0.3, 0)) },
+    nate: { name: 'Lightning Bolt', move: 'pierce', shout: 'BAZINGA!', spin: 'y', r2: 6, speed: 46, zap: true,
+      icon: '<svg viewBox="0 0 64 64"><path d="M38 4L14 36h14l-6 24 28-34H36z" fill="#ffd23f" stroke="#ff8a1f" stroke-width="3" stroke-linejoin="round"/></svg>',
+      build: () => { const s = new THREE.Shape(); [[0.3, 1.2], [-0.5, 0], [0, 0], [-0.3, -1.2], [0.6, 0.25], [0.1, 0.25]].forEach(([x, y], i) => i ? s.lineTo(x, y) : s.moveTo(x, y)); s.closePath();
+        const g = new THREE.ExtrudeGeometry(s, { depth: 0.18, bevelEnabled: false }); g.center();
+        return G(new THREE.Mesh(g, mat('#ffd23f', { emissive: '#ffb000', emissiveIntensity: 1.6, roughness: 0.3 }))); } },
     charlize: { name: 'Sourdough Loaf', move: 'straight', shout: "YOU'VE BEEN MOMMA DOUGHED!", spin: 'x',
       icon: '<svg viewBox="0 0 64 64"><ellipse cx="32" cy="36" rx="26" ry="17" fill="#c98a4a"/><ellipse cx="32" cy="32" rx="24" ry="14" fill="#d9a060"/><g stroke="#f4dcae" stroke-width="3" stroke-linecap="round"><path d="M18 26l8 10"/><path d="M29 23l8 11"/><path d="M40 23l7 10"/></g></svg>',
       build: () => { const loaf = new THREE.Mesh(new THREE.CapsuleGeometry(0.45, 0.8, 6, 14), mat('#c98a4a', { roughness: 0.75 })); loaf.rotation.z = Math.PI / 2; loaf.scale.set(1, 1, 0.85);
         return G(loaf, ...[-0.35, 0, 0.35].map(x => { const s = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 0.5), mat('#f4dcae')); s.rotation.y = 0.5; return at3(s, x, 0.4, 0); })); } },
-    rorie: { name: 'Gelato Trio', move: 'spread', shout: 'BRONCO BREAKDOWN!', spin: 'x',
-      icon: '<svg viewBox="0 0 64 64"><path d="M22 34l10 26 10-26z" fill="#d9a35a"/><path d="M24 38h16M26 44h12" stroke="#b07b3c" stroke-width="2"/><circle cx="24" cy="30" r="9" fill="#ff9ec4"/><circle cx="40" cy="30" r="9" fill="#9ee6c4"/><circle cx="32" cy="18" r="9" fill="#fff0a0"/></svg>',
-      build: c => G(new THREE.Mesh(new THREE.IcosahedronGeometry(0.55, 2), mat(c, { roughness: 0.35 }))) }
+    rorie: { name: 'Cowboy Hat', move: 'boomerang', shout: 'BRONCO BREAKDOWN!', spin: 'y',
+      icon: '<svg viewBox="0 0 64 64"><ellipse cx="32" cy="42" rx="28" ry="9" fill="#8a5a2b"/><path d="M18 40c0-14 4-24 14-24s14 10 14 24z" fill="#a8703f"/><path d="M26 18c3 4 9 4 12 0" stroke="#7a4a20" stroke-width="3" fill="none"/><rect x="18" y="34" width="28" height="5" fill="#3a2412"/></svg>',
+      build: () => { const felt = mat('#a8703f', { roughness: 0.85 });
+        const brim = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 0.07, 28), felt); brim.scale.set(1, 1, 0.82);
+        const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.5, 0.55, 20), felt);
+        const band = new THREE.Mesh(new THREE.CylinderGeometry(0.505, 0.505, 0.1, 20), mat('#3a2412'));
+        return G(brim, at3(crown, 0, 0.3, 0), at3(band, 0, 0.1, 0)); } }
   };
   const itemIcon = (k, it) => it === 'sig' ? SIGS[k.ch.id].icon : ICONS[it];
   const CYCLE = [...ITEM_KEYS, 'sig'];
@@ -760,17 +769,17 @@
         for (let n = 0; n < 24; n++) { const a = n / 24 * TAU; emit(sparks, k.pos.x, k.pos.y + 1.5, k.pos.z, Math.cos(a) * 9, rand(2, 5), Math.sin(a) * 9, n % 2 ? '#ff5ad0' : '#ffcf3a', 0.7, 4); }
         sfx.chord();
       } else {
-        const shots = S.move === 'spread' ? [[-0.2, '#ff9ec4'], [0, '#fff0a0'], [0.2, '#9ee6c4']] : [[0, null]];
+        const shots = S.shots || [[0, null]];
         let target = null;
         if (S.move === 'homing') target = karts.find(o => o.place === k.place - 1) || karts.find(o => o !== k && o.place === 1) || null;
         for (const [da, col] of shots) {
           const m = S.build(col); scene.add(m);
           const a = k.heading + da, dx = Math.sin(a), dz = Math.cos(a);
-          const sp = Math.max(k.speed, 10) + (S.move === 'bounce' ? 20 : S.move === 'pierce' ? 34 : 26);
-          projectiles.push({ mesh: m, x: k.pos.x + dx * 2.6, z: k.pos.z + dz * 2.6, dx, dz, sp, idx: k.idx, life: S.move === 'bounce' ? 9 : S.move === 'pierce' ? 3.5 : 7,
-            owner: k, age: 0, move: S.move === 'spread' ? 'straight' : S.move, spin: S.spin, sig: true, target, r2: S.r2 || 4.4, boom: S.boom, hitSet: new Set() });
+          const sp = Math.max(k.speed, 10) + (S.speed || 26);
+          projectiles.push({ mesh: m, x: k.pos.x + dx * 2.6, z: k.pos.z + dz * 2.6, dx, dz, sp, idx: k.idx, life: S.life || (S.move === 'pierce' ? 4 : 7),
+            owner: k, age: 0, move: S.move, spin: S.spin, sig: true, target, r2: S.r2 || 4.4, boom: S.boom, puddle: S.puddle, zap: S.zap, lift: S.lift || 0, hitSet: new Set() });
         }
-        if (k.isPlayer || Math.hypot(k.pos.x - player.pos.x, k.pos.z - player.pos.z) < 40) sfx.throw();
+        if (k.isPlayer || Math.hypot(k.pos.x - player.pos.x, k.pos.z - player.pos.z) < 40) { if (S.chord) sfx.chord(); else if (S.zap) sfx.zap(); else sfx.throw(); }
       }
     } else if (it === 'spaghetti') {
       // a tangle of noodles that chases the racer one place ahead
@@ -783,13 +792,18 @@
       projectiles.push({ mesh: m, x: k.pos.x + fx * 2.6, z: k.pos.z + fz * 2.6, dx: fx, dz: fz, sp: Math.max(k.speed, 10) + 24, idx: k.idx, life: 9, owner: k, age: 0, target, move: 'homing', spin: 'y' });
       if (k.isPlayer) sfx.throw();
     } else if (it === 'sauce') {
-      const g = new THREE.CircleGeometry(2.1, 22), p = g.attributes.position;
-      for (let v = 1; v < p.count; v++) { const s = rand(0.72, 1.18); p.setXY(v, p.getX(v) * s, p.getY(v) * s); }
-      const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: '#b3261e', roughness: 0.12, metalness: 0.05, polygonOffset: true, polygonOffsetFactor: -6 }));
-      m.rotation.x = -Math.PI / 2; const x = k.pos.x - fx * 3.2, z = k.pos.z - fz * 3.2, i = nearestIdx(x, z, k.idx);
-      m.position.set(x, groundAt(i, lateralAt(x, z, i)) + 0.14, z); m.receiveShadow = true; scene.add(m);
-      slicks.push({ mesh: m, x, z, owner: k }); if (k.isPlayer) sfx.throw();
+      makeSlick(k.pos.x - fx * 3.2, k.pos.z - fz * 3.2, k.idx, k, '#b3261e', false);
+      if (k.isPlayer) sfx.throw();
     }
+  }
+  // a puddle on the track that spins out the next racer through it (sauce, or Momma's water)
+  function makeSlick(x, z, guess, owner, color, sig) {
+    const g = new THREE.CircleGeometry(sig ? 2.6 : 2.1, 22), p = g.attributes.position;
+    for (let v = 1; v < p.count; v++) { const s = rand(0.72, 1.18); p.setXY(v, p.getX(v) * s, p.getY(v) * s); }
+    const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color, roughness: 0.08, metalness: 0.05, transparent: !!sig, opacity: sig ? 0.8 : 1, polygonOffset: true, polygonOffsetFactor: -6 }));
+    const i = nearestIdx(x, z, guess);
+    m.rotation.x = -Math.PI / 2; m.position.set(x, groundAt(i, lateralAt(x, z, i)) + 0.14, z); m.receiveShadow = true; scene.add(m);
+    slicks.push({ mesh: m, x, z, owner, sig });
   }
   function spinOut(k, src) {
     if (k.invT > 0 || k.spinT > 0 || k.finished && !k.isPlayer) return;
@@ -922,7 +936,7 @@
         if (!k.item) { k.item = rollItem(k); k.roulette = k.isPlayer ? 1.3 : 0.4; k.ai.itemT = rand(0.8, 2.5); if (k.isPlayer) sfx.box(); }
       }
     }
-    for (let s = slicks.length - 1; s >= 0; s--) { const o = slicks[s]; if ((o.x - k.pos.x) ** 2 + (o.z - k.pos.z) ** 2 < 3.6 && k.air <= 0.001) { if (k.invT <= 0) spinOut(k, { owner: o.owner }); scene.remove(o.mesh); slicks.splice(s, 1); } }
+    for (let s = slicks.length - 1; s >= 0; s--) { const o = slicks[s]; if (o.sig && o.owner === k) continue; if ((o.x - k.pos.x) ** 2 + (o.z - k.pos.z) ** 2 < 3.6 && k.air <= 0.001) { if (k.invT <= 0) spinOut(k, { owner: o.owner, sig: o.sig }); scene.remove(o.mesh); slicks.splice(s, 1); } }
     if (k.roulette > 0) { k.roulette -= dt; if (k.isPlayer && Math.floor(k.roulette * 12) !== Math.floor((k.roulette + dt) * 12)) sfx.tick(); if (k.roulette <= 0 && k.isPlayer) sfx.got(); }
 
     // laps
@@ -969,7 +983,8 @@
       const i = o.idx, lat = lateralAt(o.x, o.z, i);
       if (Math.abs(lat) > WALL - 0.9) { const dn = o.dx * SX[i] + o.dz * SZ[i]; if (dn * Math.sign(lat) > 0) { o.dx -= 2 * dn * SX[i]; o.dz -= 2 * dn * SZ[i]; } o.x -= SX[i] * (Math.abs(lat) - (WALL - 0.9)) * Math.sign(lat); o.z -= SZ[i] * (Math.abs(lat) - (WALL - 0.9)) * Math.sign(lat); }
       const hop = o.move === 'bounce' ? Math.abs(Math.sin(o.age * 5)) * 2.2 : o.move === 'pierce' ? 0 : Math.abs(Math.sin(o.age * 9)) * 0.4;
-      o.mesh.position.set(o.x, groundAt(i, lat) + 0.8 + hop, o.z);
+      o.mesh.position.set(o.x, groundAt(i, lat) + 0.8 + hop + o.lift, o.z);
+      if (o.zap && Math.random() < 0.8) emit(sparks, o.x + rand(-0.4, 0.4), o.mesh.position.y + rand(-0.5, 0.5), o.z + rand(-0.4, 0.4), rand(-2, 2), rand(-1, 2), rand(-2, 2), Math.random() < 0.5 ? '#ffd23f' : '#ffffff', 0.35);
       if (o.spin === 'y') o.mesh.rotation.y += dt * 14; else if (o.spin === 'face') o.mesh.rotation.y = Math.atan2(o.dx, o.dz); else o.mesh.rotation.x += dt * 10;
       let gone = o.life <= 0;
       if (o.move === 'boomerang' && o.age > 1.3 && (o.owner.pos.x - o.x) ** 2 + (o.owner.pos.z - o.z) ** 2 < 7) gone = true;
@@ -986,7 +1001,12 @@
         }
       }
       for (let s = slicks.length - 1; s >= 0 && !gone && o.move !== 'pierce'; s--) if ((slicks[s].x - o.x) ** 2 + (slicks[s].z - o.z) ** 2 < 4) { scene.remove(slicks[s].mesh); slicks.splice(s, 1); gone = true; }
-      if (gone) { for (let n = 0; n < 12; n++) emit(sparks, o.x, o.mesh.position.y, o.z, rand(-5, 5), rand(2, 6), rand(-5, 5), n % 2 ? '#d8321f' : '#f3cf5a', 0.6, 12); scene.remove(o.mesh); projectiles.splice(p, 1); }
+      if (gone) {
+        const cols = o.puddle ? ['#7fd0ff', '#ffffff'] : o.zap ? ['#ffd23f', '#ffffff'] : ['#d8321f', '#f3cf5a'];
+        for (let n = 0; n < (o.puddle ? 24 : 12); n++) emit(sparks, o.x, o.mesh.position.y, o.z, rand(-5, 5), rand(2, 7), rand(-5, 5), cols[n % 2], 0.6, 12);
+        if (o.puddle) { makeSlick(o.x, o.z, o.idx, o.owner, '#3f9fe0', true); if (Math.hypot(o.x - player.pos.x, o.z - player.pos.z) < 40) sfx.splash(); }
+        scene.remove(o.mesh); projectiles.splice(p, 1);
+      }
     }
     // Dom's power chord: a ring that rolls outward and spins out anyone it passes
     for (let w = waves.length - 1; w >= 0; w--) {
