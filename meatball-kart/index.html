@@ -2,7 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Meatball Kart">
+<meta name="theme-color" content="#0b1020">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
 <title>Meatball Kart</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +19,10 @@
           --gold: #ffcf3a; --ember: #ff7a2e; --teal: #3fd6c6; }
   html, body { height: 100%; }
   body { margin: 0; background: var(--bg); color: var(--ink); overflow: hidden; font-family: "Rubik", system-ui, sans-serif; }
+  /* a game, not a document: no text selection, copy popups or double-tap zoom */
+  html, body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+               touch-action: none; overscroll-behavior: none; }
+  .overlay { touch-action: pan-y; }
   #app { position: fixed; inset: 0; }
   #app canvas { display: block; width: 100%; height: 100%; outline: none; touch-action: none; }
   .display { font-family: "Bungee", "Rubik", system-ui, sans-serif; letter-spacing: .02em; }
@@ -45,8 +56,12 @@
           background: linear-gradient(180deg, #fff6b0 10%, var(--gold) 45%, var(--ember) 90%); -webkit-background-clip: text; background-clip: text; color: transparent;
           filter: drop-shadow(0 5px 0 #5a1f00); }
   .tag { text-align: center; margin: 10px 0 22px; color: var(--dim); font-weight: 600; letter-spacing: .14em; font-size: 13px; text-transform: uppercase; }
-  .racers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .racers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
   @media (max-width: 640px) { .racers { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  #rotateHint { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 118px); transform: translateX(-50%); z-index: 5;
+                display: flex; align-items: center; gap: 10px; padding: 10px 14px; font-weight: 600; font-size: 13px; white-space: nowrap; pointer-events: none; }
+  #rotateHint svg { width: 26px; height: 26px; flex: none; }
+  [hidden], #rotateHint[hidden] { display: none !important; }
   .racer { font: inherit; color: inherit; text-align: left; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--edge);
            background: rgba(255, 255, 255, .05); cursor: pointer; display: grid; gap: 8px; transition: transform .12s, border-color .12s, background .12s; }
   .racer:hover { background: rgba(255, 255, 255, .09); }
@@ -78,8 +93,26 @@
   .topbar button:hover { border-color: var(--gold); }
   .touch { display: none; position: fixed; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); z-index: 2;
            justify-content: space-between; align-items: flex-end; padding-inline: 16px; pointer-events: none; }
-  @media (hover: none) and (pointer: coarse) { .touch { display: flex; } #minimap { bottom: calc(env(safe-area-inset-bottom, 0px) + 110px); width: 110px; height: 110px; }
-    .place { bottom: calc(env(safe-area-inset-bottom, 0px) + 170px); font-size: 60px; } }
+  /* phones: keep place, item and map up top, away from the thumbs */
+  @media (hover: none) and (pointer: coarse) {
+    .touch { display: flex; }
+    .hud-tr { top: calc(env(safe-area-inset-top, 0px) + 50px); }
+    .itembox { width: 64px; height: 64px; } .itembox svg { width: 46px; height: 46px; }
+    .place { top: calc(env(safe-area-inset-top, 0px) + 50px); bottom: auto; right: 96px; font-size: 52px; }
+    .place sup { font-size: 22px; }
+    #minimap { top: calc(env(safe-area-inset-top, 0px) + 92px); bottom: auto; width: 96px; height: 96px; }
+  }
+  @media (hover: none) and (pointer: coarse) and (max-width: 440px) {
+    .touch { padding-inline: 10px; } .pad { gap: 8px; }
+    .touch .pad button { width: 54px; height: 54px; font-size: 10px; } .touch .pad button.big { width: 64px; height: 64px; }
+  }
+  @media (hover: none) and (pointer: coarse) and (max-height: 500px) {
+    .touch { bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); }
+    .touch .pad button { width: 60px; height: 60px; } .touch .pad button.big { width: 72px; height: 72px; }
+    .hud-tl { padding: 6px 10px; } .lap { font-size: 20px; }
+    #minimap { top: calc(env(safe-area-inset-top, 0px) + 70px); width: 80px; height: 80px; }
+    .panel { margin-block: 12px; padding-block: 16px; } .tag { margin: 6px 0 12px; }
+  }
   .pad { display: flex; gap: 12px; pointer-events: auto; align-items: flex-end; }
   .touch button { width: 70px; height: 70px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .35); background: rgba(10, 13, 28, .45);
                   color: #fff; font: inherit; font-weight: 800; font-size: 12px; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -100,7 +133,7 @@
 <div id="menu" class="overlay">
   <div class="panel glass">
     <h1 class="logo display">MEATBALL KART</h1>
-    <p class="tag">Meatball Meadows Grand Prix · 3 laps · 6 racers</p>
+    <p class="tag">Meatball Meadows Grand Prix · 3 laps · 7 racers</p>
     <div class="racers" id="racers"></div>
     <div class="row"><button class="btn" id="startBtn" type="button">Start race</button></div>
     <p class="help" id="helpText"></p>
@@ -120,7 +153,8 @@
     <div class="row"><button class="btn" id="resumeBtn" type="button">Resume</button><button class="btn ghost" id="quitBtn" type="button">Quit to menu</button></div>
   </div>
 </div>
-<div class="topbar"><button id="pauseBtn" type="button" hidden>Pause</button><button id="soundBtn" type="button">Sound on</button></div>
+<div class="topbar"><button id="fsBtn" type="button" hidden>Full screen</button><button id="pauseBtn" type="button" hidden>Pause</button><button id="soundBtn" type="button">Sound on</button></div>
+<div id="rotateHint" class="glass" hidden><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="3" width="14" height="24" rx="3" fill="none" stroke="#ffcf3a" stroke-width="2.4"/><path d="M4 22a13 13 0 0 0 9 7" fill="none" stroke="#3fd6c6" stroke-width="2.4" stroke-linecap="round"/><path d="M11 27l2 2-3 1" fill="none" stroke="#3fd6c6" stroke-width="2.4" stroke-linecap="round"/></svg>Turn your phone sideways for a bigger view</div>
 <div class="touch">
   <div class="pad"><button type="button" data-k="left" aria-label="Steer left">◀</button><button type="button" data-k="right" aria-label="Steer right">▶</button></div>
   <div class="pad"><button type="button" data-k="brake">BRAKE</button><button type="button" data-k="item">ITEM</button><button type="button" data-k="drift" class="big">DRIFT</button></div>
@@ -158,7 +192,17 @@
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(68, innerWidth / innerHeight, 0.1, 2400);
-  addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
+  // Portrait phones get a taller field of view so the track stays visible side to side.
+  let baseFov = 68;
+  function fitView() {
+    const w = innerWidth, h = innerHeight; renderer.setSize(w, h); camera.aspect = w / h;
+    baseFov = camera.aspect < 1 ? clamp(2 * Math.atan(Math.tan(35 * Math.PI / 180) / camera.aspect) * 180 / Math.PI, 68, 90) : 68;
+    camera.fov = baseFov; camera.updateProjectionMatrix();
+    if (typeof updateRotateHint === 'function') updateRotateHint();
+  }
+  addEventListener('resize', fitView);
+  addEventListener('orientationchange', () => setTimeout(fitView, 300));
+  if (window.visualViewport) visualViewport.addEventListener('resize', fitView);
 
   const SUN_DIR = new V3(0.45, 0.62, -0.64).normalize();
   const skyMat = new THREE.ShaderMaterial({
@@ -396,7 +440,8 @@
     { id: 'momma', name: 'Momma', kart: '#ff7aa8', shirt: '#ff7aa8', skin: '#f2c4a0', hair: '#5a3320', stats: [2, 4, 3], bun: true, earrings: true },
     { id: 'poppa', name: 'Poppa', kart: '#c8323a', shirt: '#f4f1ea', skin: '#e8b08a', hair: '#8a8078', stats: [5, 2, 2], stache: 1.5, cap: { color: '#3c5a44', flat: true }, big: true },
     { id: 'nate', name: 'Nate', kart: '#2f7fe0', shirt: '#2f7fe0', skin: '#f0c09a', hair: '#6a4020', stats: [3, 4, 2], cap: { color: '#ff7a2e', back: true } },
-    { id: 'charlize', name: 'Charlize', kart: '#2fbf5a', shirt: '#2fbf5a', skin: '#f4c8a8', hair: '#8a3a1a', stats: [2, 3, 4], ponytail: true }
+    { id: 'charlize', name: 'Charlize', kart: '#2fbf5a', shirt: '#2fbf5a', skin: '#f4c8a8', hair: '#8a3a1a', stats: [2, 3, 4], ponytail: true },
+    { id: 'rorie', name: 'Rorie', kart: '#ff8a1f', shirt: '#ff8a1f', skin: '#f2c09c', hair: '#e0b45a', stats: [4, 3, 2], curly: true, glasses: true }
   ];
   const mat = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.55, ...o });
   function roundedRect(w, l, r) {
@@ -432,6 +477,14 @@
       const top = new THREE.Mesh(new THREE.SphereGeometry(0.54, 20, 10, 0, TAU, 0, 1.1), hair); top.position.y = 0.03; head.add(top);
     }
     if (ch.shaggy) for (const [x, y, z] of [[-0.42, -0.05, -0.1], [0.42, -0.05, -0.1], [0, -0.05, -0.42], [-0.3, -0.2, -0.3], [0.3, -0.2, -0.3]]) { const h = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 6), hair); h.position.set(x, y, z); head.add(h); }
+    if (ch.curly) for (let r = 0; r < 3; r++) for (let n = 0; n < 7 - r * 2; n++) {
+      const a = n / (7 - r * 2) * TAU + r * 0.4, el = 0.35 + r * 0.42, c = new THREE.Mesh(new THREE.SphereGeometry(0.17, 8, 6), hair);
+      c.position.set(Math.cos(a) * Math.cos(el) * 0.52, 0.12 + Math.sin(el) * 0.46, Math.sin(a) * Math.cos(el) * 0.5 - 0.04); head.add(c);
+    }
+    if (ch.glasses) for (const s of [1, -1]) {
+      const g = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.022, 6, 16), mat('#2a2a33')); g.position.set(s * 0.17, 0.08, 0.47); head.add(g);
+      if (s > 0) { const br = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.02, 0.02), mat('#2a2a33')); br.position.set(0, 0.1, 0.49); head.add(br); }
+    }
     if (ch.bun) { const bun = new THREE.Mesh(new THREE.SphereGeometry(0.25, 12, 10), hair); bun.position.set(0, 0.5, -0.22); head.add(bun); }
     if (ch.ponytail) {
       const tie = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.04, 6, 14), mat('#ffcf3a')); tie.position.set(0, 0.32, -0.48); head.add(tie);
@@ -935,7 +988,9 @@
       ? 'Your kart speeds up on its own. Use <kbd>◀</kbd> <kbd>▶</kbd> to steer, hold <kbd>DRIFT</kbd> in a turn, and tap <kbd>ITEM</kbd> to use an item.'
       : '<kbd>↑</kbd>/<kbd>W</kbd> gas · <kbd>↓</kbd>/<kbd>S</kbd> brake · <kbd>←</kbd><kbd>→</kbd> steer · hold <kbd>Shift</kbd> or <kbd>Space</kbd> to drift · <kbd>E</kbd>/<kbd>X</kbd> use item · <kbd>P</kbd> pause · <kbd>M</kbd> sound<br>Hold a drift to charge sparks: blue, then orange, then purple, for a bigger boost.' +
         '<br>Items: Meatball (throw it) · Spaghetti (chases the racer ahead) · Spilled Sauce (drop it behind) · Hot Pepper (boost) · Golden Cannoli (invincible)';
-    if (isTouch) $('helpText').innerHTML += '<br>Items: Meatball · Spaghetti · Spilled Sauce · Hot Pepper · Golden Cannoli';
+    if (isTouch) $('helpText').innerHTML += '<br>Items: Meatball · Spaghetti · Spilled Sauce · Hot Pepper · Golden Cannoli' +
+      (document.documentElement.requestFullscreen ? '<br>Tap <kbd>Full screen</kbd> to hide the browser bars.'
+        : '<br>To hide the browser bars on iPhone: tap Share, then <kbd>Add to Home Screen</kbd>, and open the game from your home screen.');
   }
   function selectRacer(i) {
     selected = (i + CHARS.length) % CHARS.length;
@@ -954,7 +1009,22 @@
     updateButtons(); if (paused) $('resumeBtn').focus(); else renderer.domElement.focus();
   }
   function toggleMute() { muted = !muted; applyGain(); updateButtons(); try { localStorage.setItem('meatballkart-muted', muted ? '1' : '0'); } catch (e) {} }
-  function updateButtons() { pauseBtn.hidden = !canPause() || paused; soundBtn.textContent = muted ? 'Sound off' : 'Sound on'; }
+  function updateButtons() { pauseBtn.hidden = !canPause() || paused; soundBtn.textContent = muted ? 'Sound off' : 'Sound on'; updateRotateHint(); }
+  function updateRotateHint() {
+    $('rotateHint').hidden = !(isTouch && innerHeight > innerWidth && (state === 'menu' || state === 'countdown'));
+  }
+  // Full screen hides the browser bars and, where the phone allows it, locks the game sideways.
+  const fsBtn = $('fsBtn'), root = document.documentElement;
+  fsBtn.hidden = !(isTouch && root.requestFullscreen);
+  fsBtn.addEventListener('click', async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await root.requestFullscreen();
+        try { if (screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape'); } catch (e) {}
+      } else await document.exitFullscreen();
+    } catch (e) { banner('Full screen is not available here'); }
+  });
+  document.addEventListener('fullscreenchange', () => { fsBtn.textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; setTimeout(fitView, 250); });
   let driftEdge = false;
   const KM = { ArrowUp: 'gas', KeyW: 'gas', ArrowDown: 'brake', KeyS: 'brake', ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right',
     ShiftLeft: 'drift', ShiftRight: 'drift', Space: 'drift' };
@@ -964,8 +1034,9 @@
     if (state === 'menu') {
       if (e.code === 'ArrowLeft' || e.code === 'KeyA') { selectRacer(selected - 1); e.preventDefault(); return; }
       if (e.code === 'ArrowRight' || e.code === 'KeyD') { selectRacer(selected + 1); e.preventDefault(); return; }
-      if (e.code === 'ArrowUp' || e.code === 'KeyW') { selectRacer(selected - 3); e.preventDefault(); return; }
-      if (e.code === 'ArrowDown' || e.code === 'KeyS') { selectRacer(selected + 3); e.preventDefault(); return; }
+      const cols = innerWidth <= 640 ? 2 : 4;
+      if (e.code === 'ArrowUp' || e.code === 'KeyW') { selectRacer(selected - cols); e.preventDefault(); return; }
+      if (e.code === 'ArrowDown' || e.code === 'KeyS') { selectRacer(selected + cols); e.preventDefault(); return; }
       if (e.code === 'Enter' && tag !== 'BUTTON') { startRace(); e.preventDefault(); return; }
       if (e.code === 'KeyM') toggleMute();
       return;
@@ -984,6 +1055,11 @@
     }
   });
   addEventListener('keyup', e => { const k = KM[e.code]; if (k) keys[k] = false; });
+  // stop phones treating repeated taps as text selection, copy menus or zoom
+  document.addEventListener('selectstart', e => e.preventDefault());
+  document.addEventListener('contextmenu', e => { if (!(e.target.closest && e.target.closest('.overlay'))) e.preventDefault(); });
+  document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
+  document.addEventListener('gesturestart', e => e.preventDefault());
   addEventListener('blur', () => { for (const k in keys) keys[k] = false; if (canPause() && !paused) togglePause(); });
   document.addEventListener('visibilitychange', () => { if (document.hidden && canPause() && !paused) togglePause(); });
   pauseBtn.addEventListener('click', () => { initAudio(); togglePause(); });
@@ -1019,7 +1095,7 @@
     const look = new V3(k.pos.x + fx * 5, k.pos.y + 1.4, k.pos.z + fz * 5);
     if (snap) camLook.copy(look); else camLook.lerp(look, 1 - Math.exp(-10 * dt));
     camera.position.copy(camPos); camera.lookAt(camLook);
-    const fov = 68 + (k.boostT > 0 ? 9 : 0) + clamp(k.speed / 40, 0, 1) * 4;
+    const fov = baseFov + (k.boostT > 0 ? 9 : 0) + clamp(k.speed / 40, 0, 1) * 4;
     camera.fov += (fov - camera.fov) * Math.min(1, 4 * dt); camera.updateProjectionMatrix();
   }
   function update(dt) {
@@ -1096,7 +1172,7 @@
     requestAnimationFrame(frame);
   }
 
-  setupRace(); buildMenu(); updateButtons();
+  setupRace(); buildMenu(); fitView(); updateButtons();
   requestAnimationFrame(frame);
 })();
 </script>
